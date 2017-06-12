@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Results</title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="StyleSheet2.css">
+	<body>
+		<table id="frame">
+			<tr>
+				<th>Image</th>
+				<th>Name</th>
+				<th>Price</th>
+				<th>Website</th>
+				<th>Favoriet</th>
+			</tr>
+		</table>
+		<div id="favorietenLijst">
+			<button onclick="getFavorieten()">Favorieten</button>
+			<table id="favorietenTable">
+				<tr>
+					<th>Image</th>
+					<th>Name</th>
+					<th>Price</th>
+				</tr>
+			</table>
+		</div>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+		function initPage(){
+			if(localStorage.getItem("data") == null){
+				$("#frame").append("<a href=\"/vergelijkNL\">Geen data gevonden, probeer het nog eens</a>");
+			}else{
+				var dataJson = JSON.parse(localStorage.getItem("data"));
+				$.each(dataJson, function(index, value){
+		        	$("#frame").append("<tr>" + 
+		        			"<td><img src=\"" + value["image"] + "\" height=100 width=100></img></td>" +
+		        			"<td>" + value["naam"] + "</td>" + 
+		        			"<td>" + value["prijs"] + "</td>" + 
+		        			"<td><input type=\"button\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"Website\"></td>" +
+		        			"<td><input type=\"button\" id=\"favButton" + value["ID"] + "\" value=\"Favoriet\"></tr>");
+		        	$("#favButton" + value["ID"]).click(function(){
+		        		if(window.sessionStorage.getItem("sessionToken") != null){
+			        		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
+			        		$.ajax( {
+			        			type: "POST",
+			        			beforeSend: function (xhr) {
+			        		        var token = window.sessionStorage.getItem("sessionToken");
+			        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+			        		    },
+			        		    url: "restservices/search/favoriet",
+			        		    contentType: 'application/json',
+			        		    data: JSON.stringify(queryData),
+			        		    success: function ( response ) {
+			        		    	alert(response)
+			        		    }
+			        		});
+		        		}else{
+		        			alert("U bent niet ingelogd, log alstublieft eerst in!")
+		        		}
+		        	})
+		        })
+			}
+		}
+		
+		function getFavorieten(){
+			if(window.sessionStorage.getItem("sessionToken") != null){
+				if($("#favorietenTable").is(":visible")){
+					$("#favorietenTable").hide();
+				}else{
+	        		$.ajax( {
+	        			url: "restservices/search/getfavorieten/" + window.sessionStorage.getItem("sessionToken"),
+	        			dataType: 'json',
+	        			beforeSend: function (xhr) {
+	        		        var token = window.sessionStorage.getItem("sessionToken");
+	        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+	        		    },
+	        		    success: function (data) {
+	        		    	var prodJSON = JSON.parse(JSON.stringify(data));
+	        		    	$("#favorietenTable").html("");
+	        		    	$.each(prodJSON, function(index, value){
+	        		    		$("#favorietenTable").append("<tr>" + 
+	        		        			"<td><a href=\"" + value["url"] + "\"><img src=\"" + value["image"] + "\" height=100 width=100></img></a></td>" + 
+	        		    				"<td>" + value["naam"] + "</td>" + 
+	        		    				"<td>" + value["prijs"] + "</td>" +
+	        		    				"</tr>");
+	        		    	})
+	        		    	$("#favorietenTable").show();
+	        		    }
+	        		});
+				}
+    		}else{
+    			alert("U bent niet ingelogd, log alstublieft eerst in!")
+    		}
+		}
+		
+		$(document).ready(initPage());
+	</script>
+</html>

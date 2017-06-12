@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Main Pagina</title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+	<body>
+		<h1 id="titel">VergelijkNL</h1>
+		<input type="text" id="searchBar" placeholder="Search..."></br>
+		<button id="searchButton">Search</button>
+		<button id="loginButton" onclick="window.location.href = '/vergelijkNL/login.html'">Login</button>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+	function initPage(){
+		if(window.sessionStorage.getItem("sessionToken") != null){
+			$("#loginButton").hide();
+		}else{
+			$("#loginButton").show();
+		}
+	}
+	
+	$("#searchButton").click(function(){
+		$.ajax( {
+		    url: "restservices/search/" + $("#searchBar").val(),
+		    dataType: 'json',
+		    beforeSend: function (xhr) {
+		        var token = window.sessionStorage.getItem("sessionToken");
+		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+		    },
+		    success: function ( data ) {
+		    	localStorage.setItem("data", JSON.stringify(data));
+				localStorage.setItem("data" + "_storageDate", new Date())
+				window.location.href = "/vergelijkNL/results.html";
+		    }
+		})
+	})
+	
+	$(document).ready(initPage());
+	</script>
+</html>
