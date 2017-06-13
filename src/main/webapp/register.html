@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Register</title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="StyleSheet3.css">
+	<body>
+		<form id="registerForm">
+			<input type="text" name="username" placeholder="Username">
+			<input type="text" name="password" placeholder="Wachtwoord">
+		</form>
+		<button id="registerButton">Register</button>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+		$("#registerButton").click(function(){
+			$.ajax({
+			    type: "POST",
+				url: "restservices/search/register",
+			    data: $("#registerForm").serialize(),
+			    success: function(response){
+			    	$.ajax({
+					    type: "POST",
+						url: "restservices/authentication/",
+					    data: $("#registerForm").serialize(),
+					    success: function(response){
+					    	window.sessionStorage.setItem("sessionToken", response);
+					    	window.location.href = "/vergelijkNL"
+					    }
+					})
+			    }
+			})
+		})
+	
+	</script>
+</html>

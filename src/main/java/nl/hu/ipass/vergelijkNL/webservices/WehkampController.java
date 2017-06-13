@@ -17,7 +17,6 @@ public class WehkampController {
 	public Product getProduct(String query){
 		try{
 			String url = "https://www.wehkamp.nl/Winkelen/SearchOverview.aspx?Ntt=" + query;
-			System.out.println(url);
 			
 			Connection con = Jsoup.connect(url)
 					.userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
@@ -28,11 +27,11 @@ public class WehkampController {
 	        if (resp.statusCode() == 200) {
 	            Document doc = con.get();
 	            Elements product = doc.select("div.ka-content");
-	            
+
 	            Element link = product.select("a.l-article-card").first();
-	            Element img = product.select("img.photo.pop210x210").first();
+	            Element img = product.select("div.ctx > img").first();
 	            Element name = product.select("h2.article-title").first();
-	            Element prijs = product.select("span.price").first();	            
+	            Element prijs = product.select("span.price").first();	
 	            
 	            String linkString = link.attr("href");
 	            String imgString = img.attr("src");
@@ -50,7 +49,7 @@ public class WehkampController {
 	            return prod;
 	        }
 		}catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 			return new Product("null", "null", "null", 0.0);
 		}
 		return null;

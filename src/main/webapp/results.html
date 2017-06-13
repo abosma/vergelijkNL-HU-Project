@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="ISO-8859-1">
+		<meta charset="UTF-8">
 		<title>Results</title>
 	</head>
 	<link rel="stylesheet" type="text/css" href="StyleSheet2.css">
@@ -34,32 +34,39 @@
 			}else{
 				var dataJson = JSON.parse(localStorage.getItem("data"));
 				$.each(dataJson, function(index, value){
-		        	$("#frame").append("<tr>" + 
-		        			"<td><img src=\"" + value["image"] + "\" height=100 width=100></img></td>" +
-		        			"<td>" + value["naam"] + "</td>" + 
-		        			"<td>" + value["prijs"] + "</td>" + 
-		        			"<td><input type=\"button\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"Website\"></td>" +
-		        			"<td><input type=\"button\" id=\"favButton" + value["ID"] + "\" value=\"Favoriet\"></tr>");
-		        	$("#favButton" + value["ID"]).click(function(){
-		        		if(window.sessionStorage.getItem("sessionToken") != null){
-			        		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
-			        		$.ajax( {
-			        			type: "POST",
-			        			beforeSend: function (xhr) {
-			        		        var token = window.sessionStorage.getItem("sessionToken");
-			        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
-			        		    },
-			        		    url: "restservices/search/favoriet",
-			        		    contentType: 'application/json',
-			        		    data: JSON.stringify(queryData),
-			        		    success: function ( response ) {
-			        		    	alert(response)
-			        		    }
-			        		});
-		        		}else{
-		        			alert("U bent niet ingelogd, log alstublieft eerst in!")
-		        		}
-		        	})
+					if(value["naam"] != "null"){
+			        	$("#frame").append("<tr height=\"100px\">" + 
+			        			"<td><img id=\"productImage\" src=\"" + value["image"] + "\" height=\"100px\"></img></td>" +
+			        			"<td>" + value["naam"] + "</td>" + 
+			        			"<td>€" + value["prijs"] + "</td>" + 
+			        			"<td><input type=\"button\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"Website\"></td>" +
+			        			"<td><input type=\"button\" id=\"favButton" + value["ID"] + "\" value=\"Favoriet\"></tr>");
+			        	
+			        	$("#favButton" + value["ID"]).click(function(){
+			        		if(window.sessionStorage.getItem("sessionToken") != null){
+				        		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
+				        		$.ajax( {
+				        			type: "POST",
+				        			beforeSend: function (xhr) {
+				        		        var token = window.sessionStorage.getItem("sessionToken");
+				        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+				        		    },
+				        		    url: "restservices/search/favoriet",
+				        		    contentType: 'application/json',
+				        		    data: JSON.stringify(queryData),
+				        		    success: function ( response ) {
+				        		    	alert(response)
+				        		    }
+				        		});
+			        		}else{
+			        			alert("U bent niet ingelogd, log alstublieft eerst in!")
+			        		}
+			        	})
+					}else{
+						$("#frame").append("<tr height=\"100px\">" +
+								"<td>Geen resultaten gevonden bij " + value["from"] + "</td>" +
+								"</tr>")
+					}
 		        })
 			}
 		}
@@ -83,7 +90,7 @@
 	        		    		$("#favorietenTable").append("<tr>" + 
 	        		        			"<td><a href=\"" + value["url"] + "\"><img src=\"" + value["image"] + "\" height=100 width=100></img></a></td>" + 
 	        		    				"<td>" + value["naam"] + "</td>" + 
-	        		    				"<td>" + value["prijs"] + "</td>" +
+	        		    				"<td>€" + value["prijs"] + "</td>" +
 	        		    				"</tr>");
 	        		    	})
 	        		    	$("#favorietenTable").show();

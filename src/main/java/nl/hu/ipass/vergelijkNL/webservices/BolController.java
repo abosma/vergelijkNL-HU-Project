@@ -16,7 +16,7 @@ public class BolController {
 	
 	public Product getProduct(String query){
 		try{
-			Connection con = Jsoup.connect("https://www.bol.com/nl/s/algemeen/zoekresultaten/Ntt/" + query + "/N/0/Nty/1/search/true/searchType/qck/defaultSearchContext/media_all/sc/media_all/index.html").userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21").timeout(10000);
+			Connection con = Jsoup.connect("https://www.bol.com/nl/s/algemeen/zoekresultaten/Ntt/" + query + "/").userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21").timeout(10000);
 			Connection.Response resp = con.execute();
 	        if (resp.statusCode() == 200) {
 	            Document doc = con.get();
@@ -82,7 +82,7 @@ public class BolController {
 	            }
 	        }
 		}catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 			return new Product("null", "null", "null", 0.0);
 		}
 		return new Product("null", "null", "null", 0.0);
