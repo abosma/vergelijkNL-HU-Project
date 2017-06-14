@@ -12,9 +12,9 @@
 		  	<div class="nav-right nav-menu">
 		  		<div class="nav-item">
 			  		<div class="field is-grouped">
-					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
-					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/login.html'" style="margin-right: 3%;">Login</button>
-					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/register.html'" style="margin-right: 3%;">Register</button>
+					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
+					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/login.html'" style="margin-right: 3%;">Login</button>
+					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/register.html'" style="margin-right: 3%;">Register</button>
 					    <button id="logoutKnop" class="button is-primary" onclick="logOut()" style="margin-right: 3%;">Log Uit</button>
 					</div>
 				</div>
@@ -78,7 +78,7 @@
 			    success: function ( data ) {
 			    	localStorage.setItem("data", JSON.stringify(data));
 					localStorage.setItem("data" + "_storageDate", new Date())
-					window.location.href = "/vergelijkNL/results.html";
+					window.location.href = "/results.html";
 			    }
 			})
 		}

@@ -10,7 +10,7 @@
 	<body>
 		<nav class="nav has-shadow">
 		  	<div class="nav-left">
-			    <a href="/vergelijkNL" class="nav-item">
+			    <a href="/" class="nav-item">
 			      <img src="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNL.png" alt="VergelijkNL logo">
 			    </a>
 		  	</div>
@@ -34,7 +34,7 @@
 	<script>
 		function initPage(){
 			if(window.sessionStorage.getItem("sessionToken") == null){
-				window.location.href = '/vergelijkNL/login.html';
+				window.location.href = '/login.html';
 			}else{
 				$.ajax( {
 	    			url: "restservices/search/getfavorieten/" + window.sessionStorage.getItem("sessionToken"),
@@ -117,7 +117,7 @@
 				    success: function ( data ) {
 				    	localStorage.setItem("data", JSON.stringify(data));
 						localStorage.setItem("data" + "_storageDate", new Date())
-						window.location.href = "/vergelijkNL/results.html";
+						window.location.href = "/results.html";
 				    }
 				})
 			}

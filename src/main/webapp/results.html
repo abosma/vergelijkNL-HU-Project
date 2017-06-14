@@ -10,7 +10,7 @@
 	<body>
 		<nav class="nav has-shadow">
 		  	<div class="nav-left">
-			    <a href="/vergelijkNL" class="nav-item">
+			    <a href="/" class="nav-item">
 			      <img src="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNL.png" alt="VergelijkNL logo">
 			    </a>
 		  	</div>
@@ -23,9 +23,9 @@
 		  	<div class="nav-right nav-menu">
 		  		<div class="nav-item">
 			  		<div class="field is-grouped">
-					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
-					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/login.html'" style="margin-right: 3%;">Login</button>
-					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/register.html'" style="margin-right: 3%;">Register</button>
+					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
+					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/login.html'" style="margin-right: 3%;">Login</button>
+					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/register.html'" style="margin-right: 3%;">Register</button>
 					    <button id="logoutKnop" class="button is-primary" onclick="logOut()" style="margin-right: 3%;">Log Uit</button>
 					</div>
 				</div>
@@ -48,7 +48,7 @@
 				$("#registerKnop").attr("class", "button is-primary is-hidden");
 			}
 			if(localStorage.getItem("data") == null){
-				$("#frame").append("<a href=\"/vergelijkNL\">Geen data gevonden, probeer het nog eens</a>");
+				$("#frame").append("<a href=\"/\">Geen data gevonden, probeer het nog eens</a>");
 			}else{
 				var dataJson = JSON.parse(localStorage.getItem("data"));
 				$.each(dataJson, function(index, value){
