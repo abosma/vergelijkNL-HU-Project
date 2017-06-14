@@ -11,7 +11,7 @@
 		<h1 class="title" style="position:absolute; top: 10%; left: 50%;">Login</h1>
 		<form id="loginForm">
 			<div style="position:absolute; left: 40%; top: 20%; width: 26%;">
-				<input id="usernameInput" class="input" type="text" name="username" placeholder="Username" style="margin-bottom: 2%;">
+				<input id="usernameInput" class="input" type="text" name="username" placeholder="Gebruikersnaam" style="margin-bottom: 2%;">
 				<p id="usernameInputP" class="help"></p>
 				<input id="passwordInput" class="input" type="text" name="password" placeholder="Wachtwoord" style="margin-bottom: 2%;">
 				<p id="passwordInputP" class="help"></p>
@@ -108,9 +108,13 @@
 			    },
 			    error: function(){
 			    	$("#usernameInputP").attr("class", "help is-danger");
+			    	$("#passwordInputP").attr("class", "help is-danger");
 			    	$("#usernameInput").attr("class", "input is-danger");
+			    	$("#passwordInput").attr("class", "input is-danger");
 			    	$("#usernameInputP").text("Gebruikersnaam of Wachtwoord is verkeerd");
 			    	$("#usernameInputP").show();
+			    	$("#passwordInputP").text("Gebruikersnaam of Wachtwoord is verkeerd");
+			    	$("#passwordInputP").show();
 			    }
 			})
 		})
