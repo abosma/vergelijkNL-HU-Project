@@ -92,6 +92,30 @@ public class Main {
 		}
 	}
 	
+	@DELETE
+	@RolesAllowed("User")
+	@Path("verwijderFavoriet")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String verwijderFavorietProduct(String jsonString){
+		JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
+		JsonObject jo = jsonReader.readObject();
+		jsonReader.close();
+		
+		int ID = jo.getInt("productID");
+		String token = jo.getString("token");
+		
+		JwtParser parser = Jwts.parser().setSigningKey(AuthenticationResource.key);
+		Claims claims = parser.parseClaimsJws(token).getBody();
+		
+		String user = claims.getSubject();
+		
+		if(pd.verwijderFavoriet(user, ID)){
+			return "Product verwijdert uit favorieten";
+		}else{
+			return "Product is nog niet gefavoriet";
+		}
+	}
+	
 	@GET
 	@RolesAllowed("User")
 	@Path("getfavorieten/{token}")

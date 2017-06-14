@@ -4,15 +4,99 @@
 		<meta charset="ISO-8859-1">
 		<title>Login</title>
 	</head>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLicon.png"/>
 	<body>
+		<h1 class="title" style="position:absolute; top: 10%; left: 50%;">Login</h1>
 		<form id="loginForm">
-			<input type="text" name="username" placeholder="Username">
-			<input type="text" name="password" placeholder="Wachtwoord">
+			<div style="position:absolute; left: 40%; top: 20%; width: 26%;">
+				<input id="usernameInput" class="input" type="text" name="username" placeholder="Username" style="margin-bottom: 2%;">
+				<p id="usernameInputP" class="help"></p>
+				<input id="passwordInput" class="input" type="text" name="password" placeholder="Wachtwoord" style="margin-bottom: 2%;">
+				<p id="passwordInputP" class="help"></p>
+			</div>
 		</form>
-		<button id="loginButton">Login</button>
+		<button class="button is-danger" id="loginButton" style="position: absolute; left: 50%; top: 35%;" disabled>Login</button>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script>
+		var usernameGood = false;
+		var passwordGood = false;
+		
+		$("#usernameInput").keyup(function(event){
+			if($("#usernameInput").val().length < 4){
+		    	$("#usernameInputP").attr("class", "help is-danger");
+		    	$("#usernameInput").attr("class", "input is-danger");
+		    	$("#usernameInputP").text("Minimaal 4 characters");
+		    	$("#usernameInputP").show();
+		    	usernameGood = false;
+		    }else if($("#usernameInput").val().length > 20){
+		    	$("#usernameInputP").attr("class", "help is-danger");
+		    	$("#usernameInput").attr("class", "input is-danger");
+		    	$("#usernameInputP").text("Maximaal 20 characters");
+		    	$("#usernameInputP").show();
+		    	usernameGood = false;
+		    }else{
+		    	$("#usernameInput").attr("class", "input is-success");
+		    	$("#usernameInputP").hide();
+		    	usernameGood = true;
+		    }
+			
+			if(usernameGood && passwordGood){
+				$("#loginButton").prop("disabled", false);
+				$("#loginButton").attr("class", "button is-success");
+			}else{
+				$("#loginButton").prop("disabled", true);
+				$("#loginButton").attr("class", "button is-danger");
+			}
+			
+			if(event.keyCode == 13){
+		        $("#loginButton").click();
+		    }
+		});
+		
+		
+		$("#passwordInput").keyup(function(event){
+			var patt = new RegExp("[A-Z]");
+		    
+			if($("#passwordInput").val().length < 8){
+		    	$("#passwordInputP").attr("class", "help is-danger");
+		    	$("#passwordInput").attr("class", "input is-danger");
+		    	$("#passwordInputP").text("Minimaal 8 characters");
+		    	$("#passwordInputP").show();
+		    	passwordGood = false;
+		    }else if($("#passwordInput").val().length > 20){
+		    	$("#passwordInputP").attr("class", "help is-danger");
+		    	$("#passwordInput").attr("class", "input is-danger");
+		    	$("#passwordInputP").text("Maximaal 20 characters");
+		    	$("#passwordInputP").show();
+		    	passwordGood = false;
+		    }else if(!patt.test($("#passwordInput").val())){
+		    	$("#passwordInputP").attr("class", "help is-danger");
+		    	$("#passwordInput").attr("class", "input is-danger");
+		    	$("#passwordInputP").text("Minimaal 1 hoofdletter");
+		    	$("#passwordInputP").show();
+		    	passwordGood = false;
+		    }else{
+		    	$("#passwordInput").attr("class", "input is-success");
+		    	$("#passwordInputP").hide();
+		    	passwordGood = true;
+		    }
+			
+			if(usernameGood && passwordGood){
+				$("#loginButton").prop("disabled", false);
+				$("#loginButton").attr("class", "button is-success");
+			}else{
+				$("#loginButton").prop("disabled", true);
+				$("#loginButton").attr("class", "button is-danger");
+			}
+			
+			if(event.keyCode == 13){
+		        $("#loginButton").click();
+		    }
+		});
+		
 		$("#loginButton").click(function(){
 			$.ajax({
 			    type: "POST",
@@ -20,7 +104,13 @@
 			    data: $("#loginForm").serialize(),
 			    success: function(response){
 			    	window.sessionStorage.setItem("sessionToken", response);
-			    	window.location.href = "/vergelijkNL"
+			    	window.history.back();
+			    },
+			    error: function(){
+			    	$("#usernameInputP").attr("class", "help is-danger");
+			    	$("#usernameInput").attr("class", "input is-danger");
+			    	$("#usernameInputP").text("Gebruikersnaam of Wachtwoord is verkeerd");
+			    	$("#usernameInputP").show();
 			    }
 			})
 		})

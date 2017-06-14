@@ -1,40 +1,87 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="ISO-8859-1">
+		<meta charset="UTF-8">
 		<title>Main Pagina</title>
 	</head>
-	<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLicon.png"/>
 	<body>
-		<h1 id="titel">VergelijkNL</h1>
-		<input type="text" id="searchBar" placeholder="Search..."></br>
-		<button id="searchButton">Search</button>
-		<button id="loginButton" onclick="window.location.href = '/vergelijkNL/login.html'">Login</button>
+		<nav class="nav has-shadow">
+		  	<div class="nav-right nav-menu">
+		  		<div class="nav-item">
+			  		<div class="field is-grouped">
+					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
+					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/login.html'" style="margin-right: 3%;">Login</button>
+					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/register.html'" style="margin-right: 3%;">Register</button>
+					    <button id="logoutKnop" class="button is-primary" onclick="logOut()" style="margin-right: 3%;">Log Uit</button>
+					</div>
+				</div>
+			</div>
+	  	</nav>
+		<figure class="image is-32by9" style="position: absolute; width: 50%; left: 23%; top: 15%;">
+			<img src="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLTitel.png">
+		</figure>
+		<input class="input" type="text" id="searchBar" placeholder="Search..." style="position: absolute; width: 50%; left: 23%; top: 43%;"></br>
+		<button class="button" id="searchButton" style="position: absolute; width: 20%; left: 38%; top: 50%;">Search</button>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script>
 	function initPage(){
-		if(window.sessionStorage.getItem("sessionToken") != null){
-			$("#loginButton").hide();
+		if(window.sessionStorage.getItem("sessionToken") == null){
+			$("#favorietenKnop").attr("class", "button is-primary is-hidden");
+			$("#logoutKnop").attr("class", "button is-primary is-hidden");
+			$("#loginKnop").attr("class", "button is-primary");
+			$("#registerKnop").attr("class", "button is-primary");
 		}else{
-			$("#loginButton").show();
+			$("#favorietenKnop").attr("class", "button is-primary");
+			$("#logoutKnop").attr("class", "button is-primary");
+			$("#loginKnop").attr("class", "button is-primary is-hidden");
+			$("#registerKnop").attr("class", "button is-primary is-hidden");
 		}
 	}
 	
+	function logOut(){
+		window.sessionStorage.clear();
+		location.reload();
+	}
+	
+	$("#searchBar").keyup(function(event){
+	    if(event.keyCode == 13){
+	        $("#searchButton").click();
+	    }
+	});
+	
 	$("#searchButton").click(function(){
-		$.ajax( {
-		    url: "restservices/search/" + $("#searchBar").val(),
-		    dataType: 'json',
-		    beforeSend: function (xhr) {
-		        var token = window.sessionStorage.getItem("sessionToken");
-		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
-		    },
-		    success: function ( data ) {
-		    	localStorage.setItem("data", JSON.stringify(data));
-				localStorage.setItem("data" + "_storageDate", new Date())
-				window.location.href = "/vergelijkNL/results.html";
-		    }
-		})
+		if($("#searchBar").val() == ""){
+			if($("#popup").length > 0){
+    			
+    		}else{
+		    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+	    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+	    	    				"U heeft niks ingevuld, vul A.U.B. iets in" +
+	    						"</div>");
+		    	$('#closeButton').click(function(){
+		    		$("#popup").remove();
+		    	})
+    		}
+		}else{
+			$("#searchButton").attr("class", "button is-primary is-loading");
+			$.ajax( {
+			    url: "restservices/search/" + $("#searchBar").val(),
+			    dataType: 'json',
+			    beforeSend: function (xhr) {
+			        var token = window.sessionStorage.getItem("sessionToken");
+			        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+			    },
+			    success: function ( data ) {
+			    	localStorage.setItem("data", JSON.stringify(data));
+					localStorage.setItem("data" + "_storageDate", new Date())
+					window.location.href = "/vergelijkNL/results.html";
+			    }
+			})
+		}
 	})
 	
 	$(document).ready(initPage());

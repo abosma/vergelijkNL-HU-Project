@@ -4,64 +4,99 @@
 		<meta charset="UTF-8">
 		<title>Results</title>
 	</head>
-	<link rel="stylesheet" type="text/css" href="StyleSheet2.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLicon.png"/>
 	<body>
-		<table id="frame">
-			<tr>
-				<th>Image</th>
-				<th>Name</th>
-				<th>Price</th>
-				<th>Website</th>
-				<th>Favoriet</th>
-			</tr>
-		</table>
-		<div id="favorietenLijst">
-			<button onclick="getFavorieten()">Favorieten</button>
-			<table id="favorietenTable">
-				<tr>
-					<th>Image</th>
-					<th>Name</th>
-					<th>Price</th>
-				</tr>
-			</table>
-		</div>
+		<nav class="nav has-shadow">
+		  	<div class="nav-left">
+			    <a href="/vergelijkNL" class="nav-item">
+			      <img src="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNL.png" alt="VergelijkNL logo">
+			    </a>
+		  	</div>
+		  	<div class="nav-middle">
+		  		<div class="nav-item">
+		  			<input class="input is-primary" type="text" id="searchBar" placeholder="Search...">
+		  			<button class="button is-primary" id="searchButton">Search</button>
+		  		</div>
+		  	</div>
+		  	<div class="nav-right nav-menu">
+		  		<div class="nav-item">
+			  		<div class="field is-grouped">
+					    <button id="favorietenKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/favorieten.html'" style="margin-right: 3%;">Favorieten</button>
+					    <button id="loginKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/login.html'" style="margin-right: 3%;">Login</button>
+					    <button id="registerKnop" class="button is-primary" onclick="window.location.href = '/vergelijkNL/register.html'" style="margin-right: 3%;">Register</button>
+					    <button id="logoutKnop" class="button is-primary" onclick="logOut()" style="margin-right: 3%;">Log Uit</button>
+					</div>
+				</div>
+			</div>
+	  	</nav>
+		<table id="frame" class="table" style="border-collapse: collapse;"></table>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script>
 		function initPage(){
+			if(window.sessionStorage.getItem("sessionToken") == null){
+				$("#favorietenKnop").attr("class", "button is-primary is-hidden");
+				$("#logoutKnop").attr("class", "button is-primary is-hidden");
+				$("#loginKnop").attr("class", "button is-primary");
+				$("#registerKnop").attr("class", "button is-primary");
+			}else{
+				$("#favorietenKnop").attr("class", "button is-primary");
+				$("#logoutKnop").attr("class", "button is-primary");
+				$("#loginKnop").attr("class", "button is-primary is-hidden");
+				$("#registerKnop").attr("class", "button is-primary is-hidden");
+			}
 			if(localStorage.getItem("data") == null){
 				$("#frame").append("<a href=\"/vergelijkNL\">Geen data gevonden, probeer het nog eens</a>");
 			}else{
 				var dataJson = JSON.parse(localStorage.getItem("data"));
 				$.each(dataJson, function(index, value){
 					if(value["naam"] != "null"){
-			        	$("#frame").append("<tr height=\"100px\">" + 
-			        			"<td><img id=\"productImage\" src=\"" + value["image"] + "\" height=\"100px\"></img></td>" +
-			        			"<td>" + value["naam"] + "</td>" + 
-			        			"<td>€" + value["prijs"] + "</td>" + 
-			        			"<td><input type=\"button\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"Website\"></td>" +
-			        			"<td><input type=\"button\" id=\"favButton" + value["ID"] + "\" value=\"Favoriet\"></tr>");
-			        	
-			        	$("#favButton" + value["ID"]).click(function(){
-			        		if(window.sessionStorage.getItem("sessionToken") != null){
-				        		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
-				        		$.ajax( {
-				        			type: "POST",
-				        			beforeSend: function (xhr) {
-				        		        var token = window.sessionStorage.getItem("sessionToken");
-				        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
-				        		    },
-				        		    url: "restservices/search/favoriet",
-				        		    contentType: 'application/json',
-				        		    data: JSON.stringify(queryData),
-				        		    success: function ( response ) {
-				        		    	alert(response)
-				        		    }
-				        		});
-			        		}else{
-			        			alert("U bent niet ingelogd, log alstublieft eerst in!")
-			        		}
-			        	})
+						if(window.sessionStorage.getItem("sessionToken") != null){
+				        	$("#frame").append("<tr height=\"100px\">" + 
+				        			"<td style=\"padding-bottom: 3%;\"><figure class=\"image is-96x96\"><img id=\"productImage\" src=\"" + value["image"] + "\" height=\"100px\"></img></figure></td>" +
+				        			"<td>" + value["naam"] + "</td>" + 
+				        			"<td>€" + value["prijs"] + "</td>" + 
+				        			"<td><input type=\"button\" class=\"button is-primary is-outlined\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"" + value["from"] + "\"></td>" +
+				        			"<td><input type=\"button\" class=\"button is-primary is-outlined\" id=\"favButton" + value["ID"] + "\" value=\"Favoriet\"></tr>");
+				        	
+				        	$("#favButton" + value["ID"]).click(function(){
+				        		if(window.sessionStorage.getItem("sessionToken") != null){
+					        		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
+					        		$.ajax( {
+					        			type: "POST",
+					        			beforeSend: function (xhr) {
+					        		        var token = window.sessionStorage.getItem("sessionToken");
+					        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+					        		    },
+					        		    url: "restservices/search/favoriet",
+					        		    contentType: 'application/json',
+					        		    data: JSON.stringify(queryData),
+					        		    success: function ( response ) {
+					        		    	if($("#popup").length > 0){
+				        		    			
+				        		    		}else{
+						        		    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+					        		    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+					        		    	    				response +
+					        		    						"</div>");
+						        		    	$('#closeButton').click(function(){
+						        		    		$("#popup").remove();
+						        		    	})
+				        		    		}
+					        		    }
+					        		});
+				        		}
+				        	})
+						}else{
+							$("#frame").append("<tr height=\"100px\">" + 
+				        			"<td style=\"padding-bottom: 3%;\"><figure class=\"image is-96x96\"><img id=\"productImage\" src=\"" + value["image"] + "\" height=\"100px\"></img></figure></td>" +
+				        			"<td>" + value["naam"] + "</td>" + 
+				        			"<td>€" + value["prijs"] + "</td>" + 
+				        			"<td><input type=\"button\" class=\"button is-primary is-outlined\" onclick=\"window.location.href='" + value["url"] + "'\" value=\"" + value["from"] + "\"></td>" +
+				        			"</tr>");
+						}
 					}else{
 						$("#frame").append("<tr height=\"100px\">" +
 								"<td>Geen resultaten gevonden bij " + value["from"] + "</td>" +
@@ -71,35 +106,46 @@
 			}
 		}
 		
-		function getFavorieten(){
-			if(window.sessionStorage.getItem("sessionToken") != null){
-				if($("#favorietenTable").is(":visible")){
-					$("#favorietenTable").hide();
-				}else{
-	        		$.ajax( {
-	        			url: "restservices/search/getfavorieten/" + window.sessionStorage.getItem("sessionToken"),
-	        			dataType: 'json',
-	        			beforeSend: function (xhr) {
-	        		        var token = window.sessionStorage.getItem("sessionToken");
-	        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
-	        		    },
-	        		    success: function (data) {
-	        		    	var prodJSON = JSON.parse(JSON.stringify(data));
-	        		    	$("#favorietenTable").html("");
-	        		    	$.each(prodJSON, function(index, value){
-	        		    		$("#favorietenTable").append("<tr>" + 
-	        		        			"<td><a href=\"" + value["url"] + "\"><img src=\"" + value["image"] + "\" height=100 width=100></img></a></td>" + 
-	        		    				"<td>" + value["naam"] + "</td>" + 
-	        		    				"<td>€" + value["prijs"] + "</td>" +
-	        		    				"</tr>");
-	        		    	})
-	        		    	$("#favorietenTable").show();
-	        		    }
-	        		});
-				}
-    		}else{
-    			alert("U bent niet ingelogd, log alstublieft eerst in!")
-    		}
+		$("#searchBar").keyup(function(event){
+		    if(event.keyCode == 13){
+		        $("#searchButton").click();
+		    }
+		});
+		
+		$("#searchButton").click(function(){
+			if($("#searchBar").val() == ""){
+				if($("#popup").length > 0){
+	    			
+	    		}else{
+			    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+		    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+		    	    				"U heeft niks ingevuld, vul A.U.B. iets in" +
+		    						"</div>");
+			    	$('#closeButton').click(function(){
+			    		$("#popup").remove();
+			    	})
+	    		}
+			}else{
+				$("#searchButton").attr("class", "button is-primary is-loading");
+				$.ajax( {
+				    url: "restservices/search/" + $("#searchBar").val(),
+				    dataType: 'json',
+				    beforeSend: function (xhr) {
+				        var token = window.sessionStorage.getItem("sessionToken");
+				        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+				    },
+				    success: function ( data ) {
+				    	localStorage.setItem("data", JSON.stringify(data));
+						localStorage.setItem("data" + "_storageDate", new Date())
+						location.reload();
+				    }
+				})
+			}
+		})
+		
+		function logOut(){
+			window.sessionStorage.clear();
+			location.reload();
 		}
 		
 		$(document).ready(initPage());

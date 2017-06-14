@@ -65,10 +65,30 @@ public class ProductDAO extends BaseDAO{
 			pstmt.execute();
 			return true;
 		} catch (SQLException e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean verwijderFavoriet(String username, int prodID){
+		String favorietquery = "DELETE FROM favorietenlijst " +
+							   "WHERE favorietenlijst.productid = ? " +
+							   "AND favorietenlijst.gebruikerid in (SELECT gebruiker.gebruikerid " +
+				                                    				"FROM gebruiker " +
+			                                    					"WHERE gebruiker.username = ?)";
 		
+		try(Connection con = super.getConnection()){
+			PreparedStatement pstmt = con.prepareStatement(favorietquery);
+			
+			pstmt.setInt(1, prodID);
+			pstmt.setString(2, username);
+			
+			pstmt.execute();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public JsonObjectBuilder getProducten(String username){

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Favorieten</title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLicon.png"/>
+	<body>
+		<nav class="nav has-shadow">
+		  	<div class="nav-left">
+			    <a href="/vergelijkNL" class="nav-item">
+			      <img src="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNL.png" alt="VergelijkNL logo">
+			    </a>
+		  	</div>
+		  	<div class="nav-middle">
+		  		<div class="nav-item">
+		  			<input class="input is-primary" type="text" id="searchBar" placeholder="Search...">
+		  			<button class="button is-primary" id="searchButton">Search</button>
+		  		</div>
+		  	</div>
+		  	<div class="nav-right nav-menu">
+		  		<div class="nav-item">
+			  		<div class="field is-grouped">
+					    <button id="logoutKnop" class="button is-primary" onclick="logOut()" style="margin-right: 3%;">Log Uit</button>
+					</div>
+				</div>
+			</div>
+	  	</nav>
+		<table id="favorietenTable" class="table"></table>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script>
+		function initPage(){
+			if(window.sessionStorage.getItem("sessionToken") == null){
+				window.location.href = '/vergelijkNL/login.html';
+			}else{
+				$.ajax( {
+	    			url: "restservices/search/getfavorieten/" + window.sessionStorage.getItem("sessionToken"),
+	    			dataType: 'json',
+	    			beforeSend: function (xhr) {
+	    		        var token = window.sessionStorage.getItem("sessionToken");
+	    		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+	    		    },
+	    		    success: function (data) {
+	    		    	var prodJSON = JSON.parse(JSON.stringify(data));
+	    		    	$.each(prodJSON, function(index, value){
+        		    		$("#favorietenTable").append("<tr id='product" + value["ID"] + "'>" + 
+        		        			"<td><a href=\"" + value["url"] + "\"><img src=\"" + value["image"] + "\" height=100 width=100></img></a></td>" + 
+        		    				"<td>" + value["naam"] + "</td>" + 
+        		    				"<td>€" + value["prijs"] + "</td>" +
+        		    				"<td><button id='deleteFavBtn" + value["ID"] +"' class=\"delete\"></button></td>" + 
+        		    				"</tr>");
+        		    		$("#deleteFavBtn" + value["ID"]).click(function(){
+            		    		var queryData = {'productID' : value["ID"], 'token' : window.sessionStorage.getItem("sessionToken")};
+    			        		$.ajax( {
+    			        			type: "DELETE",
+    			        			beforeSend: function (xhr) {
+    			        		        var token = window.sessionStorage.getItem("sessionToken");
+    			        		        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+    			        		    },
+    			        		    url: "restservices/search/verwijderFavoriet",
+    			        		    contentType: 'application/json',
+    			        		    data: JSON.stringify(queryData),
+    			        		    success: function ( response ) {
+    			        		    	$("#product" + value["ID"]).remove();
+    			        		    	if($("#popup").length > 0){
+			        		    			
+			        		    		}else{
+					        		    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+				        		    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+				        		    	    				"Product verwijdert uit favorietenlijst" +
+				        		    						"</div>");
+					        		    	$('#closeButton').click(function(){
+					        		    		$("#popup").remove();
+					        		    		location.reload();
+					        		    	})
+			        		    		}
+    			        		    }
+    			        		});
+            		    	})
+	    		    	})
+	    		    }
+	    		});
+			}
+		}
+		
+		$("#searchBar").keyup(function(event){
+		    if(event.keyCode == 13){
+		        $("#searchButton").click();
+		    }
+		});
+		
+		$("#searchButton").click(function(){
+			if($("#searchBar").val() == ""){
+				if($("#popup").length > 0){
+	    			
+	    		}else{
+			    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+		    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+		    	    				"U heeft niks ingevuld, vul A.U.B. iets in" +
+		    						"</div>");
+			    	$('#closeButton').click(function(){
+			    		$("#popup").remove();
+			    	})
+	    		}
+			}else{
+				$("#searchButton").attr("class", "button is-primary is-loading");
+				$.ajax( {
+				    url: "restservices/search/" + $("#searchBar").val(),
+				    dataType: 'json',
+				    beforeSend: function (xhr) {
+				        var token = window.sessionStorage.getItem("sessionToken");
+				        xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+				    },
+				    success: function ( data ) {
+				    	localStorage.setItem("data", JSON.stringify(data));
+						localStorage.setItem("data" + "_storageDate", new Date())
+						window.location.href = "/vergelijkNL/results.html";
+				    }
+				})
+			}
+		})
+		
+		function logOut(){
+			window.sessionStorage.clear();
+			location.reload();
+		}
+		
+		$(document).ready(initPage());
+	</script>
+</html>
