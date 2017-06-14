@@ -13,24 +13,14 @@ import javax.ws.rs.core.Response;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import nl.hu.ipass.vergelijkNL.model.Product;
 import nl.hu.ipass.vergelijkNL.persistance.ProductDAO;
 import nl.hu.ipass.vergelijkNL.persistance.UserDAO;
 
 @Path("/search")
 @RolesAllowed({"guest", "User"})
 public class Main {
-
-	Helper h = new Helper();
 	
-	BolController bc = new BolController();
-	WehkampController wc = new WehkampController();
-	CoolblueController cc = new CoolblueController();
-	BartSmitController bsc = new BartSmitController();
-	NeckermannController nc = new NeckermannController();
-	MediamarktController mc = new MediamarktController();
-	BCCController bccc = new BCCController();
-	
+	RunnableController rc = new RunnableController();
 	ProductDAO pd = new ProductDAO();
 	UserDAO ud = new UserDAO();
 	
@@ -38,43 +28,8 @@ public class Main {
 	@GET
 	@Path("{query}")
 	@RolesAllowed({"guest", "User"})
-	public String getExample(@PathParam("query") String query){
-		String bolQuery = query.replaceAll(" ", "%2B");
-		String cbQuery = query.replaceAll(" ", "+");
-		
-		Product bp = bc.getProduct(bolQuery);
-		Product wp = wc.getProduct(query);
-		Product cp = cc.getProduct(cbQuery);
-		Product bsp = bsc.getProduct(cbQuery);
-		Product ncp = nc.getProduct(cbQuery);
-		Product mcp = mc.getProduct(cbQuery);
-		Product bccp = bccc.getProduct(cbQuery);
-		
-		int a = pd.insertProduct(bp.getNaam(), bp.getPrijs(), bp.getUrl(), bp.getImage());
-		int b = pd.insertProduct(wp.getNaam(), wp.getPrijs(), wp.getUrl(), wp.getImage());
-        int c = pd.insertProduct(cp.getNaam(), cp.getPrijs(), cp.getUrl(), cp.getImage());
-		int d = pd.insertProduct(bsp.getNaam(), bsp.getPrijs(), bsp.getUrl(), bsp.getImage());
-		int e = pd.insertProduct(ncp.getNaam(), ncp.getPrijs(), ncp.getUrl(), ncp.getImage());
-		int f = pd.insertProduct(mcp.getNaam(), mcp.getPrijs(), mcp.getUrl(), mcp.getImage());
-		int g = pd.insertProduct(bccp.getNaam(), bccp.getPrijs(), bccp.getUrl(), bccp.getImage());
-		
-		JsonObjectBuilder job = Json.createObjectBuilder();
-		JsonObjectBuilder job1 = h.buildProduct(a, "Bol.com", bp);
-		JsonObjectBuilder job2 = h.buildProduct(b, "Wehkamp.nl", wp);
-		JsonObjectBuilder job3 = h.buildProduct(c, "Coolblue.nl", cp);
-		JsonObjectBuilder job4 = h.buildProduct(d, "BartSmit.com", bsp);
-		JsonObjectBuilder job5 = h.buildProduct(e, "Neckermann.com", ncp);
-		JsonObjectBuilder job6 = h.buildProduct(f, "MediaMarkt.nl", mcp);
-		JsonObjectBuilder job7 = h.buildProduct(g, "BCC.nl", bccp);
-		
-		job.add("ProductBol", job1);
-		job.add("ProductWehkamp", job2);
-		job.add("ProductCoolblue", job3);
-		job.add("ProductBartSmit", job4);
-		job.add("ProductNeckermann", job5);
-		job.add("ProductMediamarkt", job6);
-		job.add("ProductBCC", job7);
-		
+	public String getProducten(@PathParam("query") String query){
+		JsonObjectBuilder job = rc.getProductenJson(query);
 		return job.build().toString();
 	}
 	

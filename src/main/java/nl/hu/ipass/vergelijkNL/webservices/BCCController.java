@@ -55,8 +55,6 @@ public class BCCController {
 	            linkString = "http://www.bcc.nl" + linkString;
 	            
 	            Product prod = new Product(naamString, imgString, linkString, dPrijs);
-	        	
-	            System.out.println(prod);
 	            
 	        	return prod;
 	        }
