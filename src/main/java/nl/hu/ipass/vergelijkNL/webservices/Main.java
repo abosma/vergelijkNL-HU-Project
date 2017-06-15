@@ -113,7 +113,11 @@ public class Main {
 	@RolesAllowed("guest")
 	@Path("recovery")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String getPassword(@QueryParam("username") String username, @QueryParam("email") String email){
-		return ec.sendRecovery(username, email);	
+	public Response getPassword(@QueryParam("username") String username, @QueryParam("email") String email){
+		if(ec.sendRecovery(username, email)){
+			return Response.ok().build();
+		}else{
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}	
 	}
 }

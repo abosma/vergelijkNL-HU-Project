@@ -54,7 +54,7 @@ public class EmailController {
 		}
 	}
 	
-	public String sendRecovery(String user, String email) {
+	public boolean sendRecovery(String user, String email) {
 		final String username = "vergelijknlipass@gmail.com";
 		final String password = "Welkom123";
 
@@ -73,23 +73,27 @@ public class EmailController {
 
 		try {
 			String pass = ud.getUser(email, user);
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("vergelijknlipass@gmail.com"));
-			message.setRecipients(Message.RecipientType.TO,
-				InternetAddress.parse(email));
-			message.setSubject("Wachtwoordherstel VergelijkNL");
-			message.setText("Beste " + user + ","
-				+ "\n\nU heeft uw wachtwoord aangevraagd bij VergelijkNL, hier is uw informatie:" +
-					"\n\nUsername: " + user +
-					"\nPassword: " + pass +
-					"\n\nU kunt nu inloggen bij deze link: https://vergelijknl.herokuapp.com/login.html");
-			
-			Transport.send(message);
-			
-			return "Email verzonden naar " + email;
+				if(!pass.isEmpty()){
+					Message message = new MimeMessage(session);
+					message.setFrom(new InternetAddress("vergelijknlipass@gmail.com"));
+					message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(email));
+					message.setSubject("Wachtwoordherstel VergelijkNL");
+					message.setText("Beste " + user + ","
+						+ "\n\nU heeft uw wachtwoord aangevraagd bij VergelijkNL, hier is uw informatie:" +
+							"\n\nUsername: " + user +
+							"\nPassword: " + pass +
+							"\n\nU kunt nu inloggen bij deze link: https://vergelijknl.herokuapp.com/login.html");
+					
+					Transport.send(message);
+				
+					return true;
+				}else{
+					return false;
+				}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Er is iets fout gegaan";
+			return false;
 		}
 	}
 }
