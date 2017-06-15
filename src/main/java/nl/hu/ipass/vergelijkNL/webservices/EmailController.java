@@ -77,7 +77,7 @@ public class EmailController {
 			message.setFrom(new InternetAddress("vergelijknlipass@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(email));
-			message.setSubject("Account Creatie VergelijkNL");
+			message.setSubject("Wachtwoordherstel VergelijkNL");
 			message.setText("Beste " + user + ","
 				+ "\n\nU heeft uw wachtwoord aangevraagd bij VergelijkNL, hier is uw informatie:" +
 					"\n\nUsername: " + user +
