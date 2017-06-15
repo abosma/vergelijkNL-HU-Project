@@ -24,14 +24,37 @@ public class UserDAO extends BaseDAO {
 		return role;
 	}
 	
-	public boolean createUser(String username, String password){
-		String query = "INSERT INTO public.gebruiker(username, password, role) VALUES (?, ?, ?)";
+	public String getUser(String email, String username){
+		String query = "SELECT gebruiker.password " 
+					 + "FROM gebruiker "
+					 + "WHERE gebruiker.username = ? "
+					 + "AND gebruiker.email = ?";
+		String pass = "";
+		
+		try(Connection con = super.getConnection()){
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, username);
+			pstmt.setString(2, email);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				pass = rs.getString("password");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pass;
+	}
+	
+	public boolean createUser(String username, String password, String email){
+		String query = "INSERT INTO public.gebruiker(username, password, role, email) VALUES (?, ?, ?, ?)";
 		
 		try(Connection con = super.getConnection()){
 			PreparedStatement pstmt = con.prepareStatement(query);
 			pstmt.setString(1, username);
 			pstmt.setString(2, password);
 			pstmt.setString(3, "User");
+			pstmt.setString(4, email);
 			pstmt.execute();
 			return true;
 		} catch (SQLException e) {

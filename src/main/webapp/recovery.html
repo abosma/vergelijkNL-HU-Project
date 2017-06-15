@@ -2,29 +2,26 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Register</title>
+		<title>Recovery</title>
 	</head>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/abosma/abosma.github.io/master/images/vergelijkNLicon.png"/>
 	<body>
-		<h1 class="title" style="position:absolute; top: 10%; left: 45.5%;">Nieuw Account</h1>
+		<h1 class="title" style="position:absolute; top: 10%; left: 42.5%;">Wachtwoord Vergeten</h1>
 		<form id="registerForm">
 			<div style="position:absolute; left: 40%; top: 20%; width: 26%;">
 				<input id="usernameInput" class="input" type="text" name="username" placeholder="Gebruikersnaam" style="margin-bottom: 2%;">
 				<p id="usernameInputP" class="help"></p>
-				<input id="passwordInput" class="input" type="text" name="password" placeholder="Wachtwoord" style="margin-bottom: 2%;">
-				<p id="passwordInputP" class="help"></p>
 				<input id="emailInput" class="input" type="email" name="email" placeholder="Email" style="margin-bottom: 2%;">
 				<p id="emailInputP" class="help"></p>
 			</div>
 		</form>
-		<button class="button is-danger" id="registerButton" style="position: absolute; left: 48%; top: 45%;" disabled>Creëer Account</button>
+		<button class="button is-danger" id="recoveryButton" style="position: absolute; left: 47%; top: 40%;" disabled>Stuur Wachtwoord</button>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script>
 		var usernameGood = false;
-		var passwordGood = false;
 		var emailGood = false;
 		
 		$("#usernameInput").keyup(function(event){
@@ -46,55 +43,15 @@
 		    	usernameGood = true;
 		    }
 			
-			if(usernameGood && passwordGood && emailGood){
-				$("#registerButton").prop("disabled", false);
-				$("#registerButton").attr("class", "button is-success");
+			if(usernameGood && emailGood){
+				$("#recoveryButton").prop("disabled", false);
+				$("#recoveryButton").attr("class", "button is-success");
 				if(event.keyCode == 13){
-			        $("#registerButton").click();
+			        $("#recoveryButton").click();
 			    }
 			}else{
-				$("#registerButton").prop("disabled", true);
-				$("#registerButton").attr("class", "button is-danger");
-			}
-		});
-		
-		
-		$("#passwordInput").keyup(function(event){
-			var patt = new RegExp("[A-Z]");
-		    
-			if($("#passwordInput").val().length < 8){
-		    	$("#passwordInputP").attr("class", "help is-danger");
-		    	$("#passwordInput").attr("class", "input is-danger");
-		    	$("#passwordInputP").text("Minimaal 8 characters");
-		    	$("#passwordInputP").show();
-		    	passwordGood = false;
-		    }else if($("#passwordInput").val().length > 20){
-		    	$("#passwordInputP").attr("class", "help is-danger");
-		    	$("#passwordInput").attr("class", "input is-danger");
-		    	$("#passwordInputP").text("Maximaal 20 characters");
-		    	$("#passwordInputP").show();
-		    	passwordGood = false;
-		    }else if(!patt.test($("#passwordInput").val())){
-		    	$("#passwordInputP").attr("class", "help is-danger");
-		    	$("#passwordInput").attr("class", "input is-danger");
-		    	$("#passwordInputP").text("Minimaal 1 hoofdletter");
-		    	$("#passwordInputP").show();
-		    	passwordGood = false;
-		    }else{
-		    	$("#passwordInput").attr("class", "input is-success");
-		    	$("#passwordInputP").hide();
-		    	passwordGood = true;
-		    }
-			
-			if(usernameGood && passwordGood && emailGood){
-				$("#registerButton").prop("disabled", false);
-				$("#registerButton").attr("class", "button is-success");
-				if(event.keyCode == 13){
-			        $("#registerButton").click();
-			    }
-			}else{
-				$("#registerButton").prop("disabled", true);
-				$("#registerButton").attr("class", "button is-danger");
+				$("#recoveryButton").prop("disabled", true);
+				$("#recoveryButton").attr("class", "button is-danger");
 			}
 		});
 		
@@ -113,47 +70,48 @@
 		    	emailGood = true;
 		    }
 		    
-		    if(usernameGood && passwordGood && emailGood){
-				$("#registerButton").prop("disabled", false);
-				$("#registerButton").attr("class", "button is-success");
+		    if(usernameGood && emailGood){
+				$("#recoveryButton").prop("disabled", false);
+				$("#recoveryButton").attr("class", "button is-success");
 				if(event.keyCode == 13){
-			        $("#registerButton").click();
+			        $("#recoveryButton").click();
 			    }
 			}else{
-				$("#registerButton").prop("disabled", true);
-				$("#registerButton").attr("class", "button is-danger");
+				$("#recoveryButton").prop("disabled", true);
+				$("#recoveryButton").attr("class", "button is-danger");
 			}
 		})
 		
-		$("#registerButton").click(function(){
+		$("#recoveryButton").click(function(){
 			$.ajax({
-			    type: "POST",
-				url: "restservices/search/register",
+			    type: "GET",
+				url: "restservices/search/recovery",
 			    data: $("#registerForm").serialize(),
 			    success: function(response){
-			    	$.ajax({
-					    type: "POST",
-						url: "restservices/authentication/",
-					    data: $("#registerForm").serialize(),
-					    success: function(response){
-					    	window.sessionStorage.setItem("sessionToken", response);
-					    	window.history.back();
-					    }
-					})
+			    	if($("#popup").length > 0){
+		    			
+		    		}else{
+        		    	$('body').append("<div id=\"popup\" class=\"notification is-primary\" style='position: absolute; width: 50%; top: 40%; left: 24%; z-index: 10;'>" + 
+    		    	    				"<button id=\"closeButton\" class=\"delete\"></button>" + 
+    		    	    				response +
+    		    						"</div>");
+        		    	$('#closeButton').click(function(){
+        		    		$("#popup").remove();
+        		    	})
+		    		}
 			    },
 			    error: function(){
 			    	$("#usernameInputP").attr("class", "help is-danger");
 			    	$("#usernameInput").attr("class", "input is-danger");
-			    	$("#usernameInputP").text("Gebruikersnaam en/of email is al in gebruik");
+			    	$("#usernameInputP").text("Gebruikersnaam en/of email is niet in de database");
 			    	$("#usernameInputP").show();
 			    	
 			    	$("#emailInputP").attr("class", "help is-danger");
 			    	$("#emailInput").attr("class", "input is-danger");
-			    	$("#emailInputP").text("Gebruikersnaam en/of email is al in gebruik");
+			    	$("#emailInputP").text("Gebruikersnaam en/of email is niet in de database");
 			    	$("#emailInputP").show();
 			    }
 			})
 		})
-	
 	</script>
 </html>

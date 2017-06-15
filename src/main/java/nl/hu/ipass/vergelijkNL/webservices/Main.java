@@ -21,6 +21,7 @@ import nl.hu.ipass.vergelijkNL.persistance.UserDAO;
 public class Main {
 	
 	RunnableController rc = new RunnableController();
+	EmailController ec = new EmailController();
 	ProductDAO pd = new ProductDAO();
 	UserDAO ud = new UserDAO();
 	
@@ -99,11 +100,20 @@ public class Main {
 	@RolesAllowed("guest")
 	@Path("register")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response createUser(@FormParam("username") String username, @FormParam("password") String password){
-		if(ud.createUser(username, password)){
+	public Response createUser(@FormParam("username") String username, @FormParam("password") String password, @FormParam("email") String email){
+		if(ud.createUser(username, password, email)){
+			ec.sendMail(username, password, email);
 			return Response.ok().build();
 		}else{
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}		
+	}
+	
+	@GET
+	@RolesAllowed("guest")
+	@Path("recovery")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public String getPassword(@QueryParam("username") String username, @QueryParam("email") String email){
+		return ec.sendRecovery(username, email);	
 	}
 }
