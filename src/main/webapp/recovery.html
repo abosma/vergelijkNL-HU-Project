@@ -83,6 +83,7 @@
 		})
 		
 		$("#recoveryButton").click(function(){
+			$("#recoveryButton").attr("class", "button is-success is-loading");
 			$.ajax({
 			    type: "GET",
 				url: "restservices/search/recovery",
@@ -110,6 +111,7 @@
 			    	$("#emailInput").attr("class", "input is-danger");
 			    	$("#emailInputP").text("Gebruikersnaam en/of email is niet in de database");
 			    	$("#emailInputP").show();
+			    	$("#recoveryButton").attr("class", "button is-danger");
 			    }
 			})
 		})

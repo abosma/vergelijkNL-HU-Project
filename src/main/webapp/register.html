@@ -126,6 +126,7 @@
 		})
 		
 		$("#registerButton").click(function(){
+			$("#registerButton").attr("class", "button is-success is-loading");
 			$.ajax({
 			    type: "POST",
 				url: "restservices/search/register",
@@ -151,6 +152,7 @@
 			    	$("#emailInput").attr("class", "input is-danger");
 			    	$("#emailInputP").text("Gebruikersnaam en/of email is al in gebruik");
 			    	$("#emailInputP").show();
+			    	$("#registerButton").attr("class", "button is-danger");
 			    }
 			})
 		})
